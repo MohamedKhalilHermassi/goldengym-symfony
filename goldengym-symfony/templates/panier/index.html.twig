@@ -1,0 +1,201 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier
+{% endblock %}
+
+{% block body %}
+<br>
+<br>
+<br>
+	<div class="bg-light p-3">
+		<h1>Votre panier</h1>
+	</div>
+	<div id="Panier">
+	{% if items | length > 0 %}
+	
+		<table class="table">
+			<thead>
+				<tr>
+					<th><h4>Produit</h4></th>
+					<th></th>
+					<th><h4>Prix de produit</h4></th>
+					<th><h4>Quantité</h4></th>
+					<th><h4>Total</h4></th>
+					<th></th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in items %}
+					
+						<tr id='js_Product_{{item.product.id}}'>
+							<td>
+								<img class="card-img" style="width:100px;height:100px" src="{{asset('uploads/produits/'~item.product.imageproduit)}}" alt="">
+							</td>
+							<td>{{item.product.nom}}</td>
+							<td>{{item.product.prixProduit}}DT</td>
+							<td><span id='js_quantity_{{item.product.id}}'>{{item.quantity}}</span></td>
+							<td><span id='js_prix_{{item.product.id}}'>{{ item.product.prixProduit *  item.quantity}}</span>DT</td>
+							<td>
+								<a href="{{path('panierPlus',{'id':item.product.id}) }}"class="buttonplus">
+									<i class="fa fa-plus" aria-hidden="true"></i>
+								</a>
+							</td>
+							<td>
+								<a href="{{path('panierMoins',{'id':item.product.id}) }}" class="buttonMoins">
+									<i class="fa fa-minus-circle" aria-hidden="true" ></i>
+								</a>
+							</td>
+							<td>
+								<a id ="btnRemoveProduit"href="{{path('removePrPa',{'id':item.product.id}) }}" class="btn btn-danger btn-sm">
+									<i class="fas fa-trash"></i>
+								</a>
+							</td>
+						</tr>
+					
+				{% endfor %}
+			</tbody>
+			
+			
+			
+		</table>
+		<div class="alert alert-danger">
+			<div class="text-right">
+				<h3>Total Prix : <span id="prix_total">{{ total }}</span>DT</h3>
+			</div>
+		</div>
+		
+		
+
+		{% if app.user %}
+		
+
+		<div class="text-right">
+		<a class="button button-hero" href="{{path('ajouter_commande')}}">Commander <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+		</div>
+		{% else %}
+		<div class="text-right">
+		<a class="button button-hero" href="{{path('app_login')}}">Commander <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+		</div>	
+		{% endif %}
+		
+
+	
+		{% else %}
+			
+			<p class="alert alert-danger">votre panier est vide !</p> 
+		{% endif %}
+	</div>
+<br>
+<br>
+<br>
+	
+	
+		
+
+</div>
+
+<script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
+<script>
+const spans_quantityCart = document.querySelectorAll("span#spanAddQuantity");
+const spans_quantity = document.querySelectorAll("span[id^='js_quantity_']");
+const spans_prix = document.querySelectorAll("span[id^='js_prix_']");
+const span_prix_total = document.querySelector("#prix_total");
+const span_products = document.querySelectorAll("#js_Product");
+const divPanier = document.querySelector("#Panier");
+
+//script pour le button removeProduit
+	function onClickBtnRemove(event) {
+		event.preventDefault();
+		const url = this.href;
+		//supprimer le produit
+		axios.get(url).then(function (response) {
+			const productId = response.data.id;
+			const productRow = document.getElementById(`js_Product_${productId}`);
+			
+
+			if (productRow) {
+				productRow.remove();
+			}
+			//incrementer le nombre de produit dans cart
+			spans_quantityCart.forEach(span => {
+			span.textContent=response.data.quantity;
+			});
+
+			//tester si le panier est vide
+			if (response.data.total == 0) {
+				divPanier.innerHTML='<p class="alert alert-danger">votre panier est vide !</p> '; 
+			}
+			//changer le prix totale
+			span_prix_total.textContent = response.data.total;
+
+		});
+	}
+
+	document.querySelectorAll('a#btnRemoveProduit').forEach(function (link) {
+		link.addEventListener('click', onClickBtnRemove);
+	});
+
+//script pour le button plus
+	function onClickBtnPlus(event) {
+		event.preventDefault();
+		const url = this.href;
+		
+		axios.get(url).then(function (response) {
+			//changer la quantitée
+			spans_quantity.forEach(span => {
+      		const productId = span.id.split('_')[2];
+			if (response.data.id == productId) {
+				span.textContent = response.data.quantite;
+			}
+      		});
+			//changer le prix
+			spans_prix.forEach(span => {
+      		const productId = span.id.split('_')[2];
+			if (response.data.id == productId) {
+				span.textContent = response.data.prix;
+			}
+      		});
+			//changer le prix totale
+			span_prix_total.textContent = response.data.total;
+			
+		});
+	}
+
+	document.querySelectorAll('a.buttonplus').forEach(function (link) {
+		link.addEventListener('click', onClickBtnPlus);
+	});
+//script pour le button moins
+	function onClickBtnMoins(event) {
+		event.preventDefault();
+		const url = this.href;
+		//changer la quantitée
+		axios.get(url).then(function (response) {
+			spans_quantity.forEach(span => {
+      		const productId = span.id.split('_')[2];
+			if (response.data.id == productId) {
+				span.textContent = response.data.quantite;
+			}
+      		});
+			//changer le prix
+			spans_prix.forEach(span => {
+      		const productId = span.id.split('_')[2];
+			if (response.data.id == productId) {
+				span.textContent = response.data.prix;
+			}
+      		});
+			//changer le prix totale
+			span_prix_total.textContent = response.data.total;
+		});
+	}
+
+	document.querySelectorAll('a.buttonMoins').forEach(function (link) {
+		link.addEventListener('click', onClickBtnMoins);
+	});
+
+</script>
+
+
+{% endblock %}
+

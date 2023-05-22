@@ -1,0 +1,119 @@
+{% extends 'home.html.twig' %}
+{% block body %}
+	<!-- ================ start banner area ================= -->
+	<section class="blog-banner-area" id="category">
+		<div class="container h-100">
+			<div class="blog-banner">
+				<div class="text-center">
+					<h1>Shop
+					</h1>
+					<nav aria-label="breadcrumb" class="banner-breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item">
+								<a href="#">Home</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">Shop
+							</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- ================ end banner area ================= -->
+
+
+	<!-- ================ category section start ================= -->
+	<center>
+	<section class="section-margin--small mb-5">
+		
+		<div class="container">
+			
+				<div
+					class="col-xl-9 col-lg-8 col-md-7">
+					<!-- Start Filter Bar -->
+					<div class="filter-bar d-flex flex-wrap align-items-center">
+						<div>
+							<div class="input-group filter-bar-search">
+								<input type="text" placeholder="Search">
+								<div class="input-group-append">
+									<button type="button">
+										<i class="ti-search"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Start Best Seller -->
+					<section class="lattest-product-area pb-40 category-list">
+						<div class="row">
+							{% for p in produit %}
+								<div class="col-md-6 col-lg-4">
+									<div class="card text-center card-product">
+									{% if p.quantiteproduit ==0 %}
+										<div class="card-product__img">
+											<img class="card-img" style="width:250px;" src="{{asset('uploads/produits/'~p.imageproduit)}}" alt="">
+											{% else %}
+											<div class="card-product__img">
+											<img class="card-img" style="width:250px;" src="{{asset('uploads/produits/'~p.imageproduit)}}" alt="">
+											<ul
+												class="card-product__imgOverlay">
+												<!--<li><button><i class="ti-search"></i></button></li>-->
+												<li>
+													<a href="{{ path('cart_add',{id:p.id}) }}" class ="buttonAddToCart">
+														<i class="fas fa-shopping-cart"></i>
+													</a>
+												</li>
+												<!-- <li><button><i class="ti-heart"></i></button></li>-->
+											</ul>
+											{% endif %}
+										</div>
+										<div class="card-body">
+											<p>{{p.category.nomCategory}}</p>
+											<h4 class="card-product__title">
+												<a href="{{ path('gtidf',{id:p.id})}}">{{ p.nom }}</a>
+											</h4>
+											<p class="card-product__price">{{p.prixproduit}}TND</p>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+						{{knp_pagination_render(produit)}}
+					</div>
+				</section>
+				<!-- End Best Seller -->
+			
+		</div>
+	</div>
+	
+</section>
+<center>
+{# partie java script pour l ajout d'un produit au panier #}
+<script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
+<script>
+const spans_quantity = document.querySelectorAll("span#spanAddQuantity");
+
+
+
+//script pour le button AddToCart
+	function onClickBtnAddToCart(event) {
+		event.preventDefault();
+		const url = this.href;
+		//supprimer le produit
+		axios.get(url).then(function (response) {
+			// console.log(response.data);
+			spans_quantity.forEach(span => {
+			span.textContent=response.data.quantity;
+			});
+
+		});
+	}
+
+	document.querySelectorAll('a.buttonAddToCart').forEach(function (link) {
+		link.addEventListener('click', onClickBtnAddToCart);
+	});
+
+
+</script>
+<!-- ================ category section end ================= -->{% endblock %}

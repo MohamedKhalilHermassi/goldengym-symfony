@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<br>
+<br>
+  <section class="blog_area">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8">
+                  <div class="blog_left_sidebar">
+                      <article class="row blog_item">
+                          <div class="col-md-3">
+                              <div class="blog_info text-right">
+                              {% if app.user %}
+                              {% if activites.nbrePlace != 0 and enable == false %}
+                                <a class="button button-blog" href="{{path('addParticipation',{'id':activites.id})}}">Participer</a>
+                              {% endif %}
+                              {% else %}
+                                <a class="button button-blog" href="{{path('app_login')}}">Participer</a>
+                              {% endif %}
+                              </div>
+                          </div>
+                          <div class="col-md-9">
+                              <div class="blog_post">
+                                  <img width=950 src="{{ asset('img/activite/'~activites.Image)}}" alt="">
+                                  <div class="blog_details">
+                                      
+                                          <h2>{{ activites.nomAcitivite }}</h2>
+                                      
+                                      <p>{{ activites.descriptionActivite }}</p>
+                                      <a class="button button-blog" href="{{path('AffichageActiviteF')}}">Retour à la liste</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </article>
+                  </div>
+              </div>
+              <div class="col-lg-4">
+                  <div class="blog_right_sidebar">
+                      <aside class="single_sidebar_widget author_widget">
+                          <img class="author_img rounded-circle" src="{{ asset('img/activite/'~activites.Coach.Image)}}" alt="">
+                          <h4>{{ activites.Coach.nomCoach }}</h4>
+                          <p>Coach</p>
+                          <div class="social_icon">
+                              <a href="#">
+                                  <i class="fab fa-facebook-f"></i>
+                              </a>
+                              <a href="#">
+                                  <i class="fab fa-twitter"></i>
+                              </a>
+                              <a href="#">
+                                  <i class="fab fa-github"></i>
+                              </a>
+                              <a href="#">
+                                <i class="fab fa-behance"></i>
+                              </a>
+                          </div>
+                          <p>  
+                              <br>
+                               Date : {{ activites.DateActivite|date('d F Y')}}
+                              
+                                
+                               <br>
+                                Nombre de places : {{ activites.nbrePlace }}
+                               <br>
+                                Commence à : {{ activites.TimeActivite|date('H:i')}}
+                                <br>
+                                Se termine à : {{ activites.end|date('H:i')}}
+                            <br>
+                          <br>
+                          {% if qrcode %}
+                            <img src="{{ qrcode }}" alt="">
+                           {% endif %} 
+                          </p>
+                          
+                      </aside>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <br>
+  <br>
+{% endblock %}

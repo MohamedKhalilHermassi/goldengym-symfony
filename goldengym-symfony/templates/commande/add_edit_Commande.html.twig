@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{# {% form_theme formCommande 'bootstrap_5_layout.html.twig' %} #}
+{% block title %}Gestionnaire de Commandes
+{% endblock %}
+
+{% block body %}
+<br><br><br>
+	<div class="container">
+		{% if editMode %}
+			<center><h2>Modifier une commande</h2></center>
+		{% else %}
+			<h2>Passer une commande</h2>
+		{% endif %}
+
+		<div>
+
+			{{form_start(formCommande,{'attr': {'novalidate': 'novalidate'}})}}
+			<div>{{ form_label(formCommande.AdresseLivraison, 'Adresse de livraison') }}
+			{{ form_widget(formCommande.AdresseLivraison, {'attr': {'placeholder': 'Rue, ville, gouvernement'}}) }}</div>
+
+			{# <div>{{form_row(formCommande.prixCommande,{'attr': {'placeholder':'Prix de la commande',}})}}</div> #}
+
+
+			<div>
+			{{ form_label(formCommande.telephone, 'Téléphone') }}
+			{{form_widget(formCommande.telephone,{'attr': {'placeholder':'votre numéro de téléphone'}})}}</div>
+			<div>{{form_row(formCommande.methodePaiement,{'attr': {'placeholder':'méthode de paiement'}})}}</div>
+
+			<div class="text-right"><h3> Prix Total : {{PrixTotal}}DT</h3></div>
+			<center><button type='submit' class="button button-hero">
+			
+				{% if editMode %}
+					Enregistrer
+				{% else %}
+					Passer Commande
+				{% endif %}
+
+
+			</button></center>
+			<div>{{form_end(formCommande)}}
+			</div>
+		</div>
+	</div>
+<br>
+<br>
+<br>
+{% endblock %}
